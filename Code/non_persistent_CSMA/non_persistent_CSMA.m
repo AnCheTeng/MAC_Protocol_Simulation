@@ -128,7 +128,7 @@ for iteration = 1:SAMPLE_POINTS_NUM
               elseif blocked_time(id) == 0
                 wait_time(id) = (unidrnd(RANDOM_WAITING_TIME)-2);
                 state(id) = 3;
-                % Retransmitt immediately, jump to state-1
+                % Sense the channel first.
                 if wait_time(id) == -1
                   if channel_occupied == 0
                     wait_time(id) = 0;
@@ -150,6 +150,7 @@ for iteration = 1:SAMPLE_POINTS_NUM
                   % Prepared to transmitt
                   blocked_time(id) = L;
                 elseif blocked_time(id) == L
+                  % Transmitt the frame
                   state(id) = 1;
                   blocked_time(id) = L-1;
                   attempts = attempts + 1;

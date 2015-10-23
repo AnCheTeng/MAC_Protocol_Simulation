@@ -15,7 +15,7 @@ clc;clear all;close all;
 
 N=10;
 L=10;
-TOTAL_SLOT_NUMBER= 100000;
+TOTAL_SLOT_NUMBER= 10000;
 RANDOM_WAITING_TIME = 16;
 SAMPLE_POINTS_NUM = 10;
 G = zeros(SAMPLE_POINTS_NUM,1);
@@ -23,7 +23,7 @@ Suc = zeros(SAMPLE_POINTS_NUM,1);
 p = 0.5;
 
 % You need to try a small value q here and then increase it gradually
-q = linspace(0.00003, 0.0033, SAMPLE_POINTS_NUM);
+q = linspace(0.00003, 0.004, SAMPLE_POINTS_NUM);
 % q = q(length(q));
 % Ave_Iteration: Average for experiment
 Ave_Iteration = 1;
@@ -96,8 +96,9 @@ for iteration = 1:1:SAMPLE_POINTS_NUM
               % New frame arrival
               if buffered_number(id) > 0
                 state(id) = 3;
-                % Sense the channel, idle: prepare to transmitt; busy: random-backoff
+                % Sense the channel, idle: prepare to transmitt; busy: waiting
                 if channel_occupied == 0
+                  % Prepared to transmitt
                   blocked_time(id) = L;
                 end
               end
@@ -126,7 +127,7 @@ for iteration = 1:1:SAMPLE_POINTS_NUM
               elseif blocked_time(id) == 0
                 wait_time(id) = (unidrnd(RANDOM_WAITING_TIME)-2);
                 state(id) = 3;
-                % Retransmitt immediately, jump to state-1
+                % Sense the channel first.
                 if wait_time(id) == -1
                   if channel_occupied == 0
                     wait_time(id) = 0;
@@ -140,12 +141,13 @@ for iteration = 1:1:SAMPLE_POINTS_NUM
                 wait_time(id) = wait_time(id) - 1;
               elseif wait_time(id) == 0
                 if channel_occupied == 1
-                  % Channel is busy, random-backoff
+                  % Channel is busy, keep waiting
                   blocked_time(id) = 0;
                 elseif channel_occupied == 0 && blocked_time(id) ~= L
                   % Prepared to transmitt
                   blocked_time(id) = L;
                 elseif blocked_time(id) == L && rand<p
+                  % Transmitt the frame
                   state(id) = 1;
                   blocked_time(id) = L-1;
                   attempts = attempts + 1;

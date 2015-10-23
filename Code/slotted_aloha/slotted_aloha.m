@@ -22,7 +22,7 @@ Suc = zeros(SAMPLE_POINTS_NUM,1);
 
 
 % You need to try a small value q here and then increase it gradually
-q = linspace(0.00003, 0.0004, SAMPLE_POINTS_NUM);
+q = linspace(0.00001, 0.00025, SAMPLE_POINTS_NUM);
 % q = q(length(q));
 % Ave_Iteration: Average for experiment
 Ave_Iteration = 1;
