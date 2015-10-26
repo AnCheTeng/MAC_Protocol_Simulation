@@ -12,18 +12,19 @@ clc;clear all;close all;
 % G: Attempts per frame time
 % Suc: Throughput per frame time
 
-N=10;
+
 L=10;
 TOTAL_SLOT_NUMBER= 10000;
 RANDOM_WAITING_TIME = 16;
 SAMPLE_POINTS_NUM = 10;
+N_list = 1:SAMPLE_POINTS_NUM;
 G = zeros(SAMPLE_POINTS_NUM,1);
 Suc = zeros(SAMPLE_POINTS_NUM,1);
 
 
 % You need to try a small value q here and then increase it gradually
-q = linspace(0.00001, 0.00025, SAMPLE_POINTS_NUM);
-% q = q(length(q));
+% q = linspace(0.0008, 0.0008, SAMPLE_POINTS_NUM);
+q = 0.007;
 % Ave_Iteration: Average for experiment
 Ave_Iteration = 1;
 
@@ -31,7 +32,8 @@ Ave_Iteration = 1;
 %% Simulation Main
 for iteration = 1:SAMPLE_POINTS_NUM
   for repeat = 1:Ave_Iteration
-
+    N = N_list(iteration);
+      
     % System log
     record_buffer = zeros(N, TOTAL_SLOT_NUMBER);
     record_state = zeros(N, TOTAL_SLOT_NUMBER);
@@ -72,7 +74,7 @@ for iteration = 1:SAMPLE_POINTS_NUM
         for id=1:1:N
           % Bernoulli Arrival for every time slot
           is_arrival = rand;
-          if is_arrival < q(iteration)
+          if is_arrival < q
             buffered_number(id) = buffered_number(id) + 1;
             generated = generated + 1;
           end
@@ -194,8 +196,8 @@ disp(['================================================================'])
 disp(['Simulation Complete.'])
 
 %% plot the throughput
-plot(G,Suc);
-title('System Throughput versus Traffic');
+plot(G,Suc,'-o');
+title('Slotted-Aloha System Throughput versus Traffic');
 xlabel('G (attempts per frame time)');
 ylabel('S (throughput per frame time)');
 grid on
